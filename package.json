@@ -1,0 +1,20 @@
+{
+  "name": "Task-Manager-App",
+  "scripts": {
+    "start": "node ./dist/app.js",
+    "dev": "nodemon -L -e ts --exec \"npm run build && npm start\"",
+    "build": "tsc"
+  },
+  "packageManager": "yarn@4.5.3",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.10",
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
