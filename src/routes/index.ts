@@ -1,7 +1,9 @@
-import  {Router} from "express"
+import { Router } from "express";
 
-const route:Router = Router();
+import auth from "./auth.route";
 
+const route: Router = Router();
 
+route.use("/auth", auth);
 
 export default route;

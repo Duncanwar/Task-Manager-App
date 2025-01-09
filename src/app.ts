@@ -1,34 +1,38 @@
 import express, { NextFunction, Request, Response } from "express";
-import dotenv from "dotenv";
-import { Pool } from "pg";
 
-dotenv.config();
+import route from "./routes";
+import { connectToDB, disconnectFromDB } from "./config/database";
 
-const app = express();
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || "5432"),
-});
 const port = process.env.PORT || 7000;
 
+const app = express();
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("hi");
 });
 
-const connectToDB = async () => {
+app.use(route);
+
+const startServer = async (): Promise<void> => {
   try {
-    const conn = await pool.connect();
-    if (conn) return console.log("connected to database");
-  } catch (err) {
-    console.log(err);
+    await connectToDB();
+    app.listen(port, () => {
+      console.log("Server started ");
+    });
+  } catch (error) {
+    console.error("Failed to start server", error);
+    process.exit(1);
   }
 };
+startServer().catch(console.error);
 
-connectToDB();
-
-app.listen(port, () => {
-  console.log(`Server is running at ${port}`);
+process.on("SIGINT", async () => {
+  try {
+    await disconnectFromDB();
+    process.exit(0);
+  } catch (error) {
+    console.error("Failed to disconnect from database :", error);
+    process.exit(1);
+  }
 });
+
+export default app;
