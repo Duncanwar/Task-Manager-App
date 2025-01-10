@@ -3,7 +3,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./dist/app.js",
-    "dev": "nodemon -L -e ts --exec \"npm run build && node ./dist/app.js\"",
+    "dev": "npx prisma generate dev && nodemon --exec ts-node src/app.ts",
     "build": "tsc"
   },
   "packageManager": "yarn@4.5.3",
@@ -23,6 +23,7 @@
     "bcrypt": "^5.1.1",
     "express": "^4.21.2",
     "joi": "^17.13.3",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "ts-node": "^10.9.2"
   }
 }

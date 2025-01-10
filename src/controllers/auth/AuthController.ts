@@ -12,16 +12,19 @@ export default class AuthController {
     const { error } = userSchema.validate(req.body);
 
     if (error)
-      return Response.send(res, 400, "Invalid inputs", error.details[0]);
+      return Response.error(
+        res,
+        400,
+        "Invalid inputs",
+        error.details[0].message.slice(0, 1)[0]
+      );
 
     const userExists = await prisma.user.findUnique({
       where: { email },
     });
 
-    console.log({ userExists });
-
     if (userExists) {
-      return Response.send(res, 409, "User already exists", {});
+      return Response.error(res, 409, "User already exists", {});
     }
     const hashedPassword = await hashPassword(password);
     const user = await prisma.user.create({
@@ -30,6 +33,8 @@ export default class AuthController {
 
     console.log(user);
 
-    return Response.send(res, 201, "User created", user);
+    return Response.success(res, 201, "User created", user);
   });
+
+  static login = catchAsync(async (req, res) => {});
 }
