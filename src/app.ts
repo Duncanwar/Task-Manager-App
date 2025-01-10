@@ -10,6 +10,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("hi");
 });
 
+app.use(express.json());
 app.use(route);
 
 const startServer = async (): Promise<void> => {
