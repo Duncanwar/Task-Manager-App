@@ -31,8 +31,6 @@ export default class AuthController {
       data: { name, password: hashedPassword, email },
     });
 
-    console.log(user);
-
     return Response.success(res, 201, "User created", user);
   });
 
