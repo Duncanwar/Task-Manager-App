@@ -34,5 +34,21 @@ export default class AuthController {
     return Response.success(res, 201, "User created", user);
   });
 
-  static login = catchAsync(async (req, res) => {});
+  static login = catchAsync(async (req, res) => {
+    const { email, password } = req.body;
+
+    const { error } = userSchema.validate(req.body);
+
+    if (error)
+      return Response.error(
+        res,
+        400,
+        "Invalid inputs",
+        error.details[0].message.slice(0, 1)[0]
+      );
+
+    const userExists = await prisma.user.findUnique({
+      where: { email },
+    });
+  });
 }
