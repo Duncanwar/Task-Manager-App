@@ -8,9 +8,13 @@ config();
 declare global {
   namespace Express {
     interface Request {
-      user?: string | jwt.JwtPayload;
+      user?: JwtPayloadWithId;
     }
   }
+}
+
+interface JwtPayloadWithId extends jwt.JwtPayload {
+  id: string | number;
 }
 
 const jwtSecret = process.env.JWT_SECRET;
@@ -37,8 +41,17 @@ const tokenAuthentication = (
       Responses.error(res, 401, "Invalid or expired token", {});
       return;
     }
-    req.user = payload; // Attach the user payload to the request
-    next(); // Pass control to the next middleware
+
+    // Cast the payload to the custom interface
+    const decodedPayload = payload as JwtPayloadWithId;
+
+    if (!decodedPayload.id) {
+      Responses.error(res, 401, "Token payload missing 'id'", {});
+      return;
+    }
+
+    req.user = decodedPayload; // Attach strongly typed payload to the request
+    next();
   });
 };
 

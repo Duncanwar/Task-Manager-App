@@ -8,7 +8,15 @@ import {
 } from "../../utils/helpers";
 import { ConflictException } from "../../utils/exception";
 import Response from "../../utils/response";
-import { loginSchema, signupSchema } from "../../validations/User.validation";
+import {
+  changePasswordSchema,
+  loginSchema,
+  signupSchema,
+} from "../../validations/User.validation";
+
+interface User {
+  id: string | number;
+}
 
 export default class AuthController {
   static signup = catchAsync(async (req, res) => {
@@ -69,14 +77,34 @@ export default class AuthController {
   });
 
   static changePassword = catchAsync(async (req, res) => {
-    const { password, accessToken } = req.body;
-    const { error } = loginSchema.validate(req.body);
+    const { currentPassword, newPassword } = req.body;
+    const { error } = changePasswordSchema.validate(req.body);
 
     if (error) {
       const validationErrors = error.details.map((err) => err.message);
-      return Response.error(res, 400, "Incorrect credentials", {
+      return Response.error(res, 400, "Incorrect inputs", {
         errors: validationErrors,
       });
     }
+    const hashNewPassword = await hashPassword(newPassword);
+    const user = await prisma.user.findUnique({
+      where: { id: req.user?.id as number },
+    });
+
+    if (!(await comparePassword(currentPassword, user?.password as string))) {
+      return Response.error(res, 400, "current password is incorrect");
+    }
+
+    if (await comparePassword(newPassword, user?.password as string)) {
+      return Response.error(res, 400, "Current and new password are matching");
+    }
+
+    const updateUser = await prisma.user.update({
+      where: { id: req.user?.id as number },
+      data: { password: hashNewPassword },
+    });
+
+    console.log(updateUser);
+    return Response.success(res, 200, "Password changed successfully");
   });
 }

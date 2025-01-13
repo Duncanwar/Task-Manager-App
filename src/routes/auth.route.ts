@@ -7,7 +7,7 @@ const router = Router();
 
 router.post("/signup", AuthController.signup);
 router.post("/login", AuthController.login);
-router.post(
+router.put(
   "/changepassword",
   tokenAuthentication,
   AuthController.changePassword
