@@ -99,12 +99,26 @@ export default class AuthController {
       return Response.error(res, 400, "Current and new password are matching");
     }
 
-    const updateUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: req.user?.id as number },
       data: { password: hashNewPassword },
     });
 
-    console.log(updateUser);
     return Response.success(res, 200, "Password changed successfully");
+  });
+
+  static deleteUser = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    if (!req.user) return Response.error(res, 403, "Unauthorized request");
+    const userExists = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!userExists) {
+      return Response.error(res, 404, "Nonexistent user ID");
+    }
+    await prisma.user.delete({
+      where: { id: userExists?.id },
+    });
+    return Response.success(res, 200, "user deleted successfully");
   });
 }

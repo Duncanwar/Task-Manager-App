@@ -12,6 +12,11 @@ router.put(
   tokenAuthentication,
   AuthController.changePassword
 );
+router.delete(
+  "/deleteUser/:id",
+  tokenAuthentication,
+  AuthController.deleteUser
+);
 
-router.use(errorHandler);
+// router.use(errorHandler);
 export default router;
