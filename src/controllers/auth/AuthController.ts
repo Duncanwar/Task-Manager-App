@@ -67,4 +67,16 @@ export default class AuthController {
       user,
     });
   });
+
+  static changePassword = catchAsync(async (req, res) => {
+    const { password, accessToken } = req.body;
+    const { error } = loginSchema.validate(req.body);
+
+    if (error) {
+      const validationErrors = error.details.map((err) => err.message);
+      return Response.error(res, 400, "Incorrect credentials", {
+        errors: validationErrors,
+      });
+    }
+  });
 }
