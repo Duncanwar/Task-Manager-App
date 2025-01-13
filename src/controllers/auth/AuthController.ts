@@ -45,7 +45,7 @@ export default class AuthController {
 
     if (error) {
       const validationErrors = error.details.map((err) => err.message);
-      return Response.error(res, 400, "Validation Error", {
+      return Response.error(res, 400, "Incorrect credentials", {
         errors: validationErrors,
       });
     }
@@ -56,7 +56,7 @@ export default class AuthController {
     });
 
     if (!user || !(await comparePassword(password, user.password))) {
-      return Response.error(res, 422, "Invalid email or password", {});
+      return Response.error(res, 422, "User Not Found", {});
     }
 
     const accessToken = generateToken({ id: user.id });
