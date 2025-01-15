@@ -27,7 +27,7 @@ model Task {
 
 model User {
   id       Int    @id @default(autoincrement())
-  name     String 
+  name     String
   email    String @unique
   password String
 
@@ -36,4 +36,13 @@ model User {
 
   // Tasks created by this user
   TasksCreated Task[] @relation("TasksCreatedByUser")
+}
+
+model Tax {
+  id                 Int    @id @default(autoincrement())
+  itemName           String
+  exemptionStatus    String
+  vatInclusiveAmount Float
+  vatAmount          Float
+  vatExclusivePrice  Float
 }

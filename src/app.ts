@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import cors from "cors";
 
 import route from "./routes";
 import { connectToDB, disconnectFromDB } from "./config/database";
@@ -10,6 +11,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("hi");
 });
 
+app.use(cors());
 app.use(express.json());
 app.use(route);
 
